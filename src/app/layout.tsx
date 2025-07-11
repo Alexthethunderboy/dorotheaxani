@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: "Together with you, forever.",
   openGraph: {
     title: "Dorothea & Ani",
-    description: "A beautiful wedding video player with a responsive design",
+    description: "Together with you, forever.",
     type: "video.other",
   },
   icons: {
