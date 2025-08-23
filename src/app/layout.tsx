@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import HitCounter from "./HitCounter";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -36,6 +38,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-900 min-h-screen`}
       >
         {children}
+        <HitCounter />
       </body>
     </html>
   );
