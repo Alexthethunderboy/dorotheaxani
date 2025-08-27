@@ -8,23 +8,35 @@ export default async function AdminPage() {
   const adminSecret = cookieStore.get('admin_secret')?.value;
   if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET) {
     return (
-      <form method="POST" action="/admin/login" style={{margin:'2rem auto',maxWidth:320,padding:24,borderRadius:12,background:'#222',color:'#fff',fontFamily:'monospace'}}>
-        <h2>Admin Login</h2>
-        <input name="secret" type="password" placeholder="Admin Secret" style={{width:'100%',margin:'12px 0',padding:8,borderRadius:6}} />
-        <button type="submit" style={{width:'100%',padding:8,borderRadius:6,background:'#444',color:'#fff'}}>Login</button>
-      </form>
+      <div className="wedding-card wedding-fadein" style={{marginTop:'4rem'}}>
+        <h2 style={{textAlign:'center',fontSize:'2.1rem',marginBottom:'1.5rem',color:'var(--wedding-sage)'}}>Admin Login</h2>
+        <form method="POST" action="/admin/login" style={{display:'flex',flexDirection:'column',gap:12}}>
+          <input name="secret" type="password" placeholder="Admin Secret" className="wedding-input" autoFocus />
+          <button type="submit" className="wedding-btn" style={{marginTop:8}}>Login</button>
+        </form>
+        <div style={{marginTop:'2.5rem',textAlign:'center',fontSize:'1.1rem',color:'var(--wedding-muted)'}}>
+          <span role="img" aria-label="lock">🔒</span> Private admin access
+        </div>
+      </div>
     );
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_ORIGIN || ''}/api/hit`, {
+  // Use absolute URL for fetch to avoid TypeError in server context
+  const base = process.env.NEXT_PUBLIC_SITE_ORIGIN || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
+  const res = await fetch(`${base}/api/hit`, {
     headers: { Authorization: `Bearer ${process.env.ADMIN_SECRET}` },
     cache: 'no-store',
   });
   const data = await res.json();
   return (
-    <div style={{margin:'2rem auto',maxWidth:320,padding:24,borderRadius:12,background:'#222',color:'#fff',fontFamily:'monospace'}}>
-      <h2>Video Play Count</h2>
-      <div style={{fontSize:32,margin:'16px 0'}}>{data.count}</div>
+    <div className="wedding-card wedding-fadein" style={{marginTop:'4rem',textAlign:'center'}}>
+      <h2 style={{fontSize:'2.1rem',marginBottom:'1.5rem',color:'var(--wedding-sage)'}}>Video Play Count</h2>
+      <div style={{fontSize:48,margin:'24px 0',color:'var(--wedding-blue)',fontWeight:600,letterSpacing:2}}>
+        {data.count}
+      </div>
+      <div style={{marginTop:'1.5rem',fontSize:'1.1rem',color:'var(--wedding-muted)'}}>
+        <span role="img" aria-label="flower">💐</span> Thank you for celebrating with us!
+      </div>
     </div>
   );
 }

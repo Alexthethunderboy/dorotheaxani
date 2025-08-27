@@ -1,3 +1,72 @@
+# Video Play Counter (Private Admin)
+
+This project includes a private web counter for a single video page, using Upstash Redis for atomic event counting.
+
+## API Endpoints
+
+- `POST /api/hit` — accepts JSON `{ event: 'play'|'ended'|'progress', videoId?: string }`. Increments a counter for that event. Returns `{ ok:true, count }`.
+- `GET /api/hit` — returns play count for the main video. Requires header `Authorization: Bearer <ADMIN_SECRET>`. Returns `{ ok:true, count }` or 401 if unauthorized.
+
+## Client Integration
+
+The video page automatically sends play, ended, and progress events using a reliable beacon/fetch script. No secrets are exposed to the client.
+
+## Admin Usage
+
+To fetch the current play count, run:
+
+```sh
+ADMIN_SECRET=your_secret ./tools/fetch-count.sh http://localhost:3000
+```
+
+Or with curl directly:
+
+```sh
+curl -H "Authorization: Bearer $ADMIN_SECRET" http://localhost:3000/api/hit
+```
+
+## Environment Variables
+
+Set these in your Vercel project and locally (e.g. in `.env.local`, but **do not commit secrets**):
+
+- `ADMIN_SECRET` — a long random string (required for admin GET)
+- `UPSTASH_REDIS_REST_URL` — from Upstash dashboard
+- `UPSTASH_REDIS_REST_TOKEN` — from Upstash dashboard
+
+### Setting env vars on Vercel
+
+Use the Vercel dashboard or CLI:
+
+```sh
+vercel env add ADMIN_SECRET
+vercel env add UPSTASH_REDIS_REST_URL
+vercel env add UPSTASH_REDIS_REST_TOKEN
+```
+
+See: https://vercel.com/docs/projects/environment-variables
+
+For local dev, create a `.env.local` file:
+
+```
+ADMIN_SECRET=your_secret_here
+UPSTASH_REDIS_REST_URL=...
+UPSTASH_REDIS_REST_TOKEN=...
+```
+
+## Local Development & Testing
+
+1. Start dev server: `npm run dev` or `vercel dev`
+2. Open the video page and play the video.
+3. Run: `ADMIN_SECRET=xxx curl -H "Authorization: Bearer $ADMIN_SECRET" http://localhost:3000/api/hit`
+4. Confirm the count increases.
+
+## Security Notes
+
+- **Never commit secrets** to git.
+- The admin GET endpoint is protected by a secret token in the Authorization header.
+- For site-wide access lock, consider [Vercel Deployment Protection](https://vercel.com/docs/projects/deployment-protection) or [Edge Middleware Basic Auth example](https://vercel.com/guides/secure-pages-with-basic-authentication).
+
+---
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
