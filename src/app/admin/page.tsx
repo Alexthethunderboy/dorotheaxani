@@ -6,7 +6,9 @@ export const dynamic = 'force-dynamic';
 export default async function AdminPage() {
   const cookieStore = await cookies();
   const adminSecret = cookieStore.get('admin_secret')?.value;
-  if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET) {
+  // Use NEXT_PUBLIC_ADMIN_SECRET for Vercel, fallback to ADMIN_SECRET
+  const API_SECRET = process.env.NEXT_PUBLIC_ADMIN_SECRET || process.env.ADMIN_SECRET;
+  if (!adminSecret || adminSecret !== API_SECRET) {
     return (
       <div className="wedding-card wedding-fadein" style={{marginTop:'4rem'}}>
         <h2 style={{textAlign:'center',fontSize:'2.1rem',marginBottom:'1.5rem',color:'var(--wedding-sage)'}}>Admin Login</h2>
@@ -24,9 +26,17 @@ export default async function AdminPage() {
   // Use absolute URL for fetch to avoid TypeError in server context
   const base = process.env.NEXT_PUBLIC_SITE_ORIGIN || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
   const res = await fetch(`${base}/api/hit`, {
-    headers: { Authorization: `Bearer ${process.env.ADMIN_SECRET}` },
+    headers: { Authorization: `Bearer ${API_SECRET}` },
     cache: 'no-store',
   });
+  if (!res.ok) {
+    return (
+      <div className="wedding-card wedding-fadein" style={{marginTop:'4rem',textAlign:'center'}}>
+        <h2 style={{color:'var(--wedding-sage)'}}>Error loading count</h2>
+        <div style={{color:'var(--wedding-muted)'}}>Admin API error: {res.status}</div>
+      </div>
+    );
+  }
   const data = await res.json();
   return (
     <div className="wedding-card wedding-fadein" style={{marginTop:'4rem',textAlign:'center'}}>
