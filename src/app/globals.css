@@ -1,22 +1,19 @@
 @import "tailwindcss";
 
-:root {
-  --wedding-bg: linear-gradient(120deg, #232526 0%, #3a3a3a 80%, #b7cbb5 100%),
-    radial-gradient(ellipse at 80% 20%, #f6e7e1 0%, transparent 70%),
-    radial-gradient(ellipse at 20% 80%, #c7d7e9 0%, transparent 70%);
-  --wedding-accent: #f6e7e1;
-  --wedding-sage: #b7cbb5;
-  --wedding-gold: #f1e7dc;
-  --wedding-blue: #c7d7e9;
-  --wedding-muted: #6b6b6b;
-  --wedding-text: #3a3a3a;
-  --wedding-shadow: 0 4px 32px 0 rgba(226, 236, 225, 0.12), 0 1.5px 8px 0 rgba(246,231,225,0.10);
+@theme {
+  --color-wedding-sage: #b7cbb5;
+  --color-wedding-gold: #f1e7dc;
+  --color-wedding-blue: #c7d7e9;
+  --color-wedding-muted: #8b8b8b;
+  --color-wedding-dark: #0f1115;
+  --color-wedding-darker: #050505;
+  --color-wedding-accent: #f6e7e1;
 }
 
 body {
   min-height: 100vh;
-  background: var(--wedding-bg);
-  color: var(--wedding-text);
+  background: radial-gradient(circle at 50% 0%, #1f2229 0%, #050505 100%);
+  color: #e5e7eb;
   font-family: 'Cormorant Garamond', 'Georgia', serif;
   letter-spacing: 0.01em;
   font-size: 18px;
@@ -28,105 +25,41 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Cormorant Garamond', 'Georgia', serif;
-  color: var(--wedding-sage);
+  color: var(--color-wedding-sage);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
 a {
-  color: var(--wedding-blue);
+  color: var(--color-wedding-blue);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.3s ease;
 }
 a:hover {
-  color: var(--wedding-sage);
+  color: var(--color-wedding-sage);
 }
 
-
-.wedding-card {
-  background: linear-gradient(120deg, rgba(255,255,255,0.96) 70%, rgba(246,231,225,0.92) 100%);
-  border-radius: 2.2rem;
-  box-shadow: 0 8px 48px 0 rgba(183,203,181,0.18), 0 1.5px 8px 0 rgba(246,231,225,0.10);
-  padding: 3.2rem 2.2rem 2.6rem 2.2rem;
-  margin: 2.5rem auto;
-  max-width: 700px;
-  width: 95vw;
-  border: 2.5px solid black;
-  backdrop-filter: blur(4px) saturate(1.2);
-  position: relative;
-  transition: box-shadow 0.2s, border 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-@media (max-width: 900px) {
-  .wedding-card {
-    max-width: 98vw;
-    padding: 2.2rem 1.2rem 1.6rem 1.2rem;
-    border-radius: 1.3rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .wedding-card {
-    max-width: 100vw;
-    padding: 1.2rem 0.3rem 1.2rem 0.3rem;
-    border-radius: 0.8rem;
-    box-shadow: 0 2px 12px 0 rgba(183,203,181,0.10);
-  }
-}
-
-.wedding-btn {
-  background: linear-gradient(90deg, #b7cbb5 0%, #f6e7e1 100%);
-  color: #3a3a3a;
-  border: none;
-  border-radius: 0.75rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1.1rem;
-  font-family: inherit;
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(183,203,181,0.08);
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.wedding-btn:hover {
-  background: linear-gradient(90deg, #f6e7e1 0%, #b7cbb5 100%);
-  color: var(--wedding-blue);
-}
-
-.wedding-input {
-  width: 100%;
-  padding: 0.7rem 1rem;
-  border-radius: 0.75rem;
-  border: 1.5px solid #b7cbb5;
-  background: #fff9f4;
-  font-size: 1rem;
-  margin: 0.5rem 0 1.2rem 0;
-  font-family: inherit;
-  color: var(--wedding-text);
-  outline: none;
-  transition: border 0.2s;
-}
-.wedding-input:focus {
-  border-color: var(--wedding-sage);
+.font-sans-ui {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .wedding-fadein {
   animation: wedding-fadein 1.2s cubic-bezier(.4,0,.2,1);
 }
+
 @keyframes wedding-fadein {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: none; scale: 1; }
 }
 
-/* Petal float animation for background */
 .petal {
   position: absolute;
   pointer-events: none;
-  opacity: 0.18;
-  animation: petal-float 16s linear infinite;
+  opacity: 0.15;
+  animation: petal-float 20s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(246, 231, 225, 0.15));
 }
+
 @keyframes petal-float {
   0% { transform: translateY(0) rotate(0deg) scale(1); }
   100% { transform: translateY(-120vh) rotate(360deg) scale(1.1); }

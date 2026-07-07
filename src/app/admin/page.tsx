@@ -1,4 +1,3 @@
-
 import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
@@ -6,18 +5,32 @@ export const dynamic = 'force-dynamic';
 export default async function AdminPage() {
   const cookieStore = await cookies();
   const adminSecret = cookieStore.get('admin_secret')?.value;
-  // Use NEXT_PUBLIC_ADMIN_SECRET for Vercel, fallback to ADMIN_SECRET
-  const API_SECRET = process.env.NEXT_PUBLIC_ADMIN_SECRET || process.env.ADMIN_SECRET;
+  // Use server-side ADMIN_SECRET exclusively to prevent exposing to client
+  const API_SECRET = process.env.ADMIN_SECRET;
+  
   if (!adminSecret || adminSecret !== API_SECRET) {
     return (
-      <div className="wedding-card wedding-fadein" style={{marginTop:'4rem'}}>
-        <h2 style={{textAlign:'center',fontSize:'2.1rem',marginBottom:'1.5rem',color:'var(--wedding-sage)'}}>Admin Login</h2>
-        <form method="POST" action="/admin/login" style={{display:'flex',flexDirection:'column',gap:12}}>
-          <input name="secret" type="password" placeholder="Admin Secret" className="wedding-input" autoFocus />
-          <button type="submit" className="wedding-btn" style={{marginTop:8}}>Login</button>
-        </form>
-        <div style={{marginTop:'2.5rem',textAlign:'center',fontSize:'1.1rem',color:'var(--wedding-muted)'}}>
-          <span role="img" aria-label="lock">🔒</span> Private admin access
+      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+        <div className="wedding-fadein backdrop-blur-md bg-white/5 border border-white/10 rounded-3xl p-10 shadow-2xl max-w-md w-full text-center">
+          <h2 className="text-3xl mb-6 text-wedding-sage tracking-wide">Admin Access</h2>
+          <form method="POST" action="/admin/login" className="flex flex-col gap-4">
+            <input 
+              name="secret" 
+              type="password" 
+              placeholder="Enter Admin Secret" 
+              className="w-full px-4 py-3 rounded-xl border border-white/20 bg-black/40 text-white placeholder-gray-400 focus:outline-none focus:border-wedding-sage transition-colors font-sans-ui" 
+              autoFocus 
+            />
+            <button 
+              type="submit" 
+              className="mt-2 w-full bg-gradient-to-r from-wedding-sage to-wedding-gold text-black font-semibold py-3 rounded-xl shadow-[0_0_15px_rgba(183,203,181,0.2)] hover:shadow-[0_0_25px_rgba(183,203,181,0.4)] transition-all font-sans-ui cursor-pointer"
+            >
+              Unlock Dashboard
+            </button>
+          </form>
+          <div className="mt-8 text-wedding-muted font-sans-ui text-sm flex items-center justify-center gap-2">
+            <span role="img" aria-label="lock">🔒</span> Secured Area
+          </div>
         </div>
       </div>
     );
@@ -29,23 +42,30 @@ export default async function AdminPage() {
     headers: { Authorization: `Bearer ${API_SECRET}` },
     cache: 'no-store',
   });
+  
   if (!res.ok) {
     return (
-      <div className="wedding-card wedding-fadein" style={{marginTop:'4rem',textAlign:'center'}}>
-        <h2 style={{color:'var(--wedding-sage)'}}>Error loading count</h2>
-        <div style={{color:'var(--wedding-muted)'}}>Admin API error: {res.status}</div>
+      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+        <div className="wedding-fadein backdrop-blur-md bg-white/5 border border-red-500/20 rounded-3xl p-10 shadow-2xl text-center">
+          <h2 className="text-red-400 text-2xl mb-2">Connection Error</h2>
+          <div className="text-wedding-muted font-sans-ui">Admin API returned status: {res.status}</div>
+        </div>
       </div>
     );
   }
+  
   const data = await res.json();
+  
   return (
-    <div className="wedding-card wedding-fadein" style={{marginTop:'4rem',textAlign:'center'}}>
-      <h2 style={{fontSize:'2.1rem',marginBottom:'1.5rem',color:'var(--wedding-sage)'}}>Video Play Count</h2>
-      <div style={{fontSize:48,margin:'24px 0',color:'var(--wedding-blue)',fontWeight:600,letterSpacing:2}}>
-        {data.count}
-      </div>
-      <div style={{marginTop:'1.5rem',fontSize:'1.1rem',color:'var(--wedding-muted)'}}>
-        <span role="img" aria-label="flower">💐</span> Thank you for celebrating with us!
+    <div className="flex flex-col items-center justify-center min-h-[70vh]">
+      <div className="wedding-fadein backdrop-blur-md bg-white/5 border border-white/10 rounded-3xl p-12 shadow-2xl max-w-lg w-full text-center">
+        <h2 className="text-3xl mb-2 text-wedding-sage tracking-wider">Video Plays</h2>
+        <div className="text-6xl my-8 text-wedding-gold font-bold tracking-widest drop-shadow-[0_0_15px_rgba(241,231,220,0.3)]">
+          {data.count}
+        </div>
+        <div className="mt-6 text-wedding-muted text-lg flex items-center justify-center gap-2">
+          <span role="img" aria-label="sparkles">✨</span> Thank you for celebrating!
+        </div>
       </div>
     </div>
   );
